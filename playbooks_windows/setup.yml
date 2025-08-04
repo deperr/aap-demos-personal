@@ -15,7 +15,7 @@ controller_templates:
       job_type: check
       ask_job_type_on_launch: true
       inventory: "Home Lab"
-      project: "Ansible Product Demos"
+      project: "Personal | AAP Demos"
       playbook: "windows/patching.yml"
       credentials:
         - "Windows"
@@ -57,7 +57,7 @@ controller_templates:
     - name: "Windows | Test Connectivity"
       job_type: run
       inventory: "Home Lab"
-      project: "Ansible Product Demos"
+      project: "Personal | AAP Demos"
       playbook: "windows/connect.yml"
       credentials:
         - "Windows"
@@ -74,7 +74,7 @@ controller_templates:
     - name: "Windows / Run PowerShell Command"
       job_type: run
       inventory: "Home Lab"
-      project: "Ansible Product Demos"
+      project: "Personal | AAP Demos"
       playbook: "windows/powershell.yml"
       credentials:
         - "Windows"
@@ -96,7 +96,7 @@ controller_templates:
     - name: "Windows | Query Services"
       job_type: run
       inventory: "Home Lab"
-      project: "Ansible Product Demos"
+      project: "Personal | AAP Demos"
       playbook: "windows/powershell_script.yml"
       credentials:
         - "Windows"

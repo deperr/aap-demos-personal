@@ -1,5 +1,7 @@
 # Demo Patching Ansible Project
 
+A lot of these playbooks are shamelessly lifted from [Ansible Product Demos](https://github.com/ansible/product-demos/tree/main).
+
 ## Included content/ Directory Structure
 
 The directory structure follows best practices recommended by the Ansible
@@ -9,8 +11,6 @@ project requirements.
 ```
  ansible-project/
  |── .devcontainer/
- |    └── docker/
- |        └── devcontainer.json
  |    └── podman/
  |        └── devcontainer.json
  |    └── devcontainer.json
@@ -28,17 +28,9 @@ project requirements.
  |               └── README.md
  |               └── roles/sample_role/
  |                         └── README.md
- |                         └── tasks/main.yml
- |── inventory/
- |   |── hosts.yml
- |   |── argspec_validation_inventory.yml
- |   └── groups_vars/
- |   └── host_vars/
  |── ansible-navigator.yml
  |── ansible.cfg
  |── devfile.yaml
- |── linux_playbook.yml
- |── network_playbook.yml
  |── README.md
  |── site.yml
 ```

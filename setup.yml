@@ -20,12 +20,16 @@
       vars:
         controller_dependency_check: false  # noqa: var-naming[no-role-prefix]
 
-- name: Setup demo
+- name: Setup controller
   hosts: localhost
   gather_facts: false
+
   tasks:
-    - name: Include configuration for {{ demo }}
-      ansible.builtin.include_vars: "playbooks_linux/setup_test.yml"
+    - name: Configurae playbooks
+      loop:
+        - linux
+        - windows
+      ansible.builtin.include_vars: "playbooks_{{ item }}/setup.yml"
 
     - name: Demo Components
       ansible.builtin.include_role:
