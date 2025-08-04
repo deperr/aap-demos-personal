@@ -1,0 +1,195 @@
+---
+user_message:
+  - Update the 'activation_key' and 'org_id' extra variables for 'LINUX / Register with Insights'. https://access.redhat.com/management/activation_keys
+  - Update Credential for Insights Inventory with Red Hat account.
+  - Add variables for system_roles. https://console.redhat.com/ansible/automation-hub/repo/published/redhat/rhel_system_roles
+
+# "!unsafe" used to pass raw jinja2 through to the injector definition, see
+# https://github.com/redhat-cop/controller_configuration/tree/devel/roles/credential_types#formating-injectors
+controller_credential_types:
+  - name: Insights Collection
+    kind: cloud
+    inputs:
+      fields:
+        - id: insights_user
+          type: string
+          label: Insights User
+        - id: insights_password
+          type: string
+          label: Insights Password
+          secret: true
+    injectors:
+      env:
+        INSIGHTS_USER: !unsafe '{{ insights_user }}'
+        INSIGHTS_PASSWORD: !unsafe '{{ insights_password }}'
+
+controller_credentials:
+  - name: Insights Inventory
+    credential_type: Insights Collection
+    organization: Default
+    state: exists
+    inputs:
+      insights_user: REPLACEME
+      insights_password: REPLACEME
+
+controller_inventory_sources:
+  - name: Insights Inventory
+    inventory: Demo Inventory
+    source: scm
+    source_project: Ansible Product Demos
+    source_path: linux/inventory.insights.yml
+    credential: Insights Inventory
+
+controller_templates:
+  - name: "Linux | Register with Insights"
+    job_type: run
+    inventory: "Demo Inventory"
+    project: "Ansible Product Demos"
+    playbook: "linux/ec2_register.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    credentials:
+      - "Demo Credential"
+    survey_enabled: true
+    extra_vars:
+      activation_key: !unsafe "RHEL{{ ansible_distribution_major_version }}_{{ env }}"
+      org_id: REPLACEME
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Choose Environment
+          type: multiplechoice
+          variable: env
+          choices:
+            - Dev
+            - QA
+            - Prod
+          required: true
+        - question_name: Ansible Inventory Group (and Insights tag) to be created
+          type: text
+          variable: insights_tag
+          required: true
+        - question_name: Org ID
+          type: text
+          variable: org_id
+          required: true
+
+  - name: "Linux | Troubleshoot"
+    job_type: run
+    inventory: "Demo Inventory"
+    project: "Ansible Product Demos"
+    playbook: "linux/tshoot.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    credentials:
+      - "Demo Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+
+  - name: "Linux | Patching"
+    job_type: check
+    inventory: "Demo Inventory"
+    project: "Ansible Product Demos"
+    playbook: "linux/patching.yml"
+    execution_environment: Default execution environment
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    ask_job_type_on_launch: true
+    credentials:
+      - "Demo Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+  
+  - name: "Linux | Run Shell Script"
+    job_type: run
+    inventory: "Demo Inventory"
+    project: "Ansible Product Demos"
+    playbook: "linux/run_script.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    credentials:
+      - "Demo Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Shell Script
+          type: textarea
+          variable: shell_script
+          required: true
+
+  - name: "Linux | Fact Scan"
+    project: "Ansible Product Demos"
+    playbook: linux/fact_scan.yml
+    inventory: Demo Inventory
+    execution_environment: Default execution environment
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    credentials:
+      - Demo Credential
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+
+  - name: "Linux | Podman Webserver"
+    job_type: run
+    inventory: "Demo Inventory"
+    project: "Ansible Product Demos"
+    playbook: "linux/podman.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    credentials:
+      - "Demo Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Web Page Message
+          type: textarea
+          variable: message
+          required: true
+          default: "This is Apache webserver running in a container with podman"

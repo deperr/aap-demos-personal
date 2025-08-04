@@ -1,0 +1,17 @@
+.logs/*
+*.retry
+*.vault
+collections/*
+!collections/ansible_collections
+!collections/requirements.yml
+collections/ansible_collections/*
+!collections/ansible_collections/demo
+collections/ansible_collections/demo/*
+!collections/ansible_collections/demo/patching
+.logs/*
+
+# MacOS
+.DS_Store
+
+# Ansible
+.ansible/

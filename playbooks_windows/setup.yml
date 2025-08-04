@@ -1,0 +1,119 @@
+---
+
+user_message: |
+  ''
+
+controller_projects:
+  - name: Fact Scan
+    organization: Default
+    scm_type: git
+    scm_url: 'https://github.com/ansible/awx-facts-playbooks.git'
+
+controller_templates:
+    - name: "Windows | Patching"
+      use_fact_cache: true
+      job_type: check
+      ask_job_type_on_launch: true
+      inventory: "Home Lab"
+      project: "Ansible Product Demos"
+      playbook: "windows/patching.yml"
+      credentials:
+        - "Windows"
+      survey_enabled: true
+      survey:
+        name: ''
+        description: ''
+        spec:
+          - question_name: Server Name or Pattern
+            type: text
+            variable: _hosts
+            required: false
+          - question_name: Update categories
+            type: multiselect
+            variable: win_update_categories
+            required: false
+            default: SecurityUpdates
+            choices:
+              - Application
+              - Connectors
+              - CriticalUpdates
+              - DefinitionUpdates
+              - DeveloperKits
+              - FeaturePacks Guidance
+              - SecurityUpdates
+              - ServicePacks
+              - Tools
+              - UpdateRollups
+              - Updates
+          - question_name: Reboot after install?
+            type: multiplechoice
+            variable: allow_reboot
+            required: false
+            default: 'Yes'
+            choices:
+              - 'Yes'
+              - 'No'
+
+    - name: "Windows | Test Connectivity"
+      job_type: run
+      inventory: "Home Lab"
+      project: "Ansible Product Demos"
+      playbook: "windows/connect.yml"
+      credentials:
+        - "Windows"
+      survey_enabled: true
+      survey:
+        name: ''
+        description: ''
+        spec:
+          - question_name: Server Name or Pattern
+            type: text
+            variable: _hosts
+            required: false
+    
+    - name: "Windows / Run PowerShell Command"
+      job_type: run
+      inventory: "Home Lab"
+      project: "Ansible Product Demos"
+      playbook: "windows/powershell.yml"
+      credentials:
+        - "Windows"
+      survey_enabled: true
+      survey:
+        name: ''
+        description: ''
+        spec:
+          - question_name: Server Name or Pattern
+            type: text
+            variable: _hosts
+            required: false
+          - question_name: PowerShell Script
+            type: textarea
+            variable: ps_script
+            default: "Get-Service | Where-Object -FilterScript {$_.Status -eq 'running'} | Select-Object -Property 'Name'"
+            required: true
+
+    - name: "Windows | Query Services"
+      job_type: run
+      inventory: "Home Lab"
+      project: "Ansible Product Demos"
+      playbook: "windows/powershell_script.yml"
+      credentials:
+        - "Windows"
+      survey_enabled: true
+      survey:
+        name: ''
+        description: ''
+        spec:
+          - question_name: Server Name or Pattern
+            type: text
+            variable: _hosts
+            required: false
+          - question_name: Service state to query?
+            type: multiplechoice
+            variable: service_state
+            required: false
+            default: 'Running'
+            choices:
+              - 'Running'
+              - 'Stopped'

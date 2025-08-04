@@ -1,0 +1,16 @@
+---
+
+- name: Windows updates
+  hosts: "{{ _hosts | default('os_windows') }}"
+
+
+  tasks:
+
+    - name: Assert that host is in webservers group
+      ansible.builtin.assert:
+        that: "'{{ report_server }}' in groups.os_windows"
+        msg: "Please make sure that the os_windows group exists and has hosts populated"
+
+    - name: Patch windows server
+      ansible.builtin.include_role:
+        name: demo.patching.windows
