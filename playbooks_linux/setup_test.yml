@@ -4,15 +4,13 @@ user_message:
   - Update Credential for Insights Inventory with Red Hat account.
   - Add variables for system_roles. https://console.redhat.com/ansible/automation-hub/repo/published/redhat/rhel_system_roles
 
+
 controller_templates:
-  - name: "Linux | Register with Insights test"
+  - name: "[TEST] Linux | Register with Insights"
     job_type: run
     inventory: "Demo Inventory"
     project: "Ansible Product Demos"
     playbook: "linux/ec2_register.yml"
-    notification_templates_started: Telemetry
-    notification_templates_success: Telemetry
-    notification_templates_error: Telemetry
     credentials:
       - "Demo Credential"
     survey_enabled: true

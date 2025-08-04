@@ -1,5 +1,41 @@
 ---
-- name: Example playbook
+- name: Setup common prerequisites
   hosts: localhost
-  roles:
-    - role: demo.patching.run
+  gather_facts: false
+
+  # vars_files should be scoped to a play so variables defined in the
+  # files should not be available in subsequent plays, so certain
+  # resources won't be retried
+  vars_files:
+    - common/setup.yml
+
+  tasks:
+    - name: Create reusable deployment ID
+      ansible.builtin.set_fact:
+        _deployment_id: '{{ lookup("ansible.builtin.password", "{{ playbook_dir }}/.deployment_id", chars=["ascii_lowercase", "digits"], length=5) }}'
+
+    - name: Create common demo resources
+      ansible.builtin.include_role:
+        name: infra.controller_configuration.dispatch
+      vars:
+        controller_dependency_check: false  # noqa: var-naming[no-role-prefix]
+
+- name: Setup demo
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Include configuration for {{ demo }}
+      ansible.builtin.include_vars: "playbooks_linux/setup_test.yml"
+
+    - name: Demo Components
+      ansible.builtin.include_role:
+        name: infra.controller_configuration.dispatch
+      vars:
+        controller_dependency_check: false  # noqa: var-naming[no-role-prefix]
+
+    - name: Print Message
+      ansible.builtin.debug:
+        msg: "{{ user_message }}"
+      when: user_message is defined
+
+...

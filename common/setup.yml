@@ -1,0 +1,72 @@
+---
+
+
+# controller_organizations:
+#   - name: Default
+#     default_environment: Product Demos EE
+
+# controller_projects:
+#   - name: Ansible Cloud Content Lab - AWS
+#     organization: Default
+#     scm_type: git
+#     wait: true
+#     scm_url: https://github.com/ansible-content-lab/aws.infrastructure_config_demos.git
+#     default_environment: Cloud Services Execution Environment
+
+
+# controller_credentials:
+#   - name: AWS
+#     credential_type: Amazon Web Services
+#     organization: Default
+#     update_secrets: false
+#     state: exists
+#     inputs:
+#       username: REPLACEME
+#       password: REPLACEME
+
+# controller_inventory_sources:
+#   - name: AWS Inventory
+#     organization: Default
+#     source: ec2
+#     inventory: Demo Inventory
+#     credential: AWS
+#     overwrite: true
+#     source_vars:
+#       hostnames:
+#         - tag:Name
+#       compose:
+#         ansible_host: public_ip_address
+#         ansible_user: ec2-user
+#       groups:
+#         cloud_aws: true
+#         os_linux: "platform_details == 'Red Hat Enterprise Linux'"
+#         os_windows: "platform_details == 'Windows'"
+
+#       keyed_groups:
+#         - key: tags.blueprint
+#           prefix: blueprint
+#         - key: tags.owner
+#           prefix: owner
+#         - key: tags.purpose
+#           prefix: purpose
+#         - key: tags.deployment
+#           prefix: deployment
+#         - key: tags.Compliance
+#           separator: ''
+
+# controller_groups:
+#   - name: cloud_aws
+#     inventory: Demo Inventory
+#     variables:
+#       ansible_user: ec2-user
+#   - name: os_windows
+#     inventory: Demo Inventory
+#     variables:
+#       ansible_connection: winrm
+#       ansible_winrm_transport: credssp
+#       ansible_winrm_server_cert_validation: ignore
+#       ansible_port: 5986
+
+controller_settings:
+  - name: SESSION_COOKIE_AGE
+    value: 180000
