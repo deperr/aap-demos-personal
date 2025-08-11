@@ -1,0 +1,48 @@
+---
+
+- name: Deploy containerized applications
+  hosts: "{{ _hosts | default(omit) }}"
+  become: true
+
+  vars:
+    opa_policies_dir: home/testpath
+
+  tasks:
+    - name: Create Open Policy Agent policies directory
+      tags: deploy_opa
+      ansible.builtin.file:
+        path: "{{ opa_policies_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy OPA policies to OPA server
+      tags:
+        - deploy_opa
+        - opa_policies
+      ansible.builtin.copy:
+        src: ./policies/
+        dest: "{{ opa_policies_dir }}"
+        mode: '0644'
+
+    - name: Run the OPA container
+      tags: deploy_opa
+      containers.podman.podman_container:
+        name: opa
+        image: openpolicyagent/opa:latest-static
+        state: started
+        command: ["run", "--server", "--watch", "/policies", "--addr", "0.0.0.0:8181"]
+        ports:
+          - "8181:8181"
+        volume:
+          - "{{ opa_policies_dir }}:/policies:Z"
+
+    - name: Get status of OPA container
+      register: opa_container_info
+      tags: deploy_opa
+      containers.podman.podman_container_info:
+        name: opa
+
+    - name: Display OPA container status
+      tags: deploy_opa
+      ansible.builtin.debug:
+        var: opa_container_info.container

@@ -1,0 +1,175 @@
+---
+- name: ServiceNow ITSM - Create Tickets and Change Requests
+  hosts: localhost
+  gather_facts: false
+  
+  module_defaults:
+    group/servicenow.itsm.all:
+      instance:
+        host: "{{ servicenow_instance }}"
+        username: "{{ servicenow_username }}"
+        password: "{{ servicenow_password }}"
+        # Optional OAuth configuration (uncomment if using OAuth)
+        # client_id: "{{ servicenow_client_id | default(omit) }}"
+        # client_secret: "{{ servicenow_client_secret | default(omit) }}"
+  
+  vars:
+    new_incident:
+      short_description: "{{ incident_short_description | default('Incident created via AAP') }}"
+      description: "{{ incident_description | default('This is an incident created using Ansible Automation Platform with servicenow.itsm collection') }}"
+      priority: "{{ incident_priority | default('3') }}"
+      urgency: "{{ incident_urgency | default('3') }}"
+      impact: "{{ incident_impact | default('3') }}"
+      category: "{{ incident_category | default('Software') }}"
+      subcategory: "{{ incident_subcategory | default('Application') }}"
+      caller_id: "{{ incident_caller | default(servicenow_username) }}"
+      assignment_group: "{{ incident_assignment_group | default('IT Support') }}"
+      state: "{{ incident_state | default('New') }}"
+    
+    new_change_request:
+      short_description: "{{ change_short_description | default('Change request created via AAP') }}"
+      description: "{{ change_description | default('This is a change request created using Ansible Automation Platform') }}"
+      priority: "{{ change_priority | default('3') }}"
+      risk: "{{ change_risk | default('low') }}"
+      impact: "{{ change_impact | default('3') }}"
+      type: "{{ change_type | default('normal') }}"
+      category: "{{ change_category | default('Software') }}"
+      requested_by: "{{ change_requested_by | default(servicenow_username) }}"
+      assignment_group: "{{ change_assignment_group | default('Change Management') }}"
+      state: "{{ change_state | default('New') }}"
+      justification: "{{ change_justification | default('Automated change via AAP') }}"
+
+  tasks:
+    - name: Create incident ticket in ServiceNow
+      register: created_incident
+      when: create_incident | default(true) | bool
+      tags:
+        - create
+        - incident
+      servicenow.itsm.incident:
+        state: present
+        short_description: "{{ new_incident.short_description }}"
+        description: "{{ new_incident.description }}"
+        priority: "{{ new_incident.priority }}"
+        urgency: "{{ new_incident.urgency }}"
+        impact: "{{ new_incident.impact }}"
+        category: "{{ new_incident.category }}"
+        subcategory: "{{ new_incident.subcategory }}"
+        caller_id: "{{ new_incident.caller_id }}"
+        assignment_group: "{{ new_incident.assignment_group }}"
+        other:
+          state: "{{ new_incident.state }}"
+
+    - name: Display created incident details
+      when: 
+        - create_incident | default(true) | bool
+        - created_incident is succeeded
+        - created_incident.record is defined
+      tags:
+        - create
+        - incident
+      ansible.builtin.debug:
+        msg: 
+          - "✅ Incident created successfully!"
+          - "📋 Number: {{ created_incident.record.number }}"
+          - "🆔 Sys ID: {{ created_incident.record.sys_id }}"
+          - "📊 State: {{ created_incident.record.state }}"
+          - "⚡ Priority: {{ created_incident.record.priority }}"
+          - "👤 Assigned to: {{ created_incident.record.assignment_group }}"
+          - "🔗 URL: https://{{ servicenow_instance }}/nav_to.do?uri=incident.do?sys_id={{ created_incident.record.sys_id }}"
+
+    - name: Create change request in ServiceNow
+      register: created_change_request
+      when: create_change_request | default(false) | bool
+      tags:
+        - create
+        - change
+      servicenow.itsm.change_request:
+        state: present
+        short_description: "{{ new_change_request.short_description }}"
+        description: "{{ new_change_request.description }}"
+        priority: "{{ new_change_request.priority }}"
+        risk: "{{ new_change_request.risk }}"
+        impact: "{{ new_change_request.impact }}"
+        type: "{{ new_change_request.type }}"
+        category: "{{ new_change_request.category }}"
+        requested_by: "{{ new_change_request.requested_by }}"
+        assignment_group: "{{ new_change_request.assignment_group }}"
+        justification: "{{ new_change_request.justification }}"
+        other:
+          state: "{{ new_change_request.state }}"
+
+    - name: Display created change request details
+      when: 
+        - create_change_request | default(false) | bool
+        - created_change_request is succeeded
+        - created_change_request.record is defined
+      tags:
+        - create
+        - change
+      ansible.builtin.debug:
+        msg: 
+          - "✅ Change request created successfully!"
+          - "📋 Number: {{ created_change_request.record.number }}"
+          - "🆔 Sys ID: {{ created_change_request.record.sys_id }}"
+          - "📊 State: {{ created_change_request.record.state }}"
+          - "⚠️ Risk: {{ created_change_request.record.risk }}"
+          - "📅 Type: {{ created_change_request.record.type }}"
+          - "👤 Assigned to: {{ created_change_request.record.assignment_group }}"
+          - "🔗 URL: https://{{ servicenow_instance }}/nav_to.do?uri=change_request.do?sys_id={{ created_change_request.record.sys_id }}"
+
+    - name: Create problem record in ServiceNow
+      register: created_problem
+      when: create_problem | default(false) | bool
+      tags:
+        - create
+        - problem
+      servicenow.itsm.problem:
+        state: present
+        short_description: "{{ problem_short_description | default('Problem created via AAP') }}"
+        description: "{{ problem_description | default('This is a problem record created using Ansible Automation Platform') }}"
+        priority: "{{ problem_priority | default('3') }}"
+        impact: "{{ problem_impact | default('3') }}"
+        urgency: "{{ problem_urgency | default('3') }}"
+        category: "{{ problem_category | default('Software') }}"
+        assignment_group: "{{ problem_assignment_group | default('Problem Management') }}"
+        assigned_to: "{{ problem_assigned_to | default('') }}"
+
+    - name: Display created problem details
+      when: 
+        - create_problem | default(false) | bool
+        - created_problem is succeeded
+        - created_problem.record is defined
+      tags:
+        - create
+        - problem
+
+      ansible.builtin.debug:
+        msg: 
+          - "✅ Problem record created successfully!"
+          - "📋 Number: {{ created_problem.record.number }}"
+          - "🆔 Sys ID: {{ created_problem.record.sys_id }}"
+          - "📊 State: {{ created_problem.record.state }}"
+          - "⚡ Priority: {{ created_problem.record.priority }}"
+          - "👤 Assigned to: {{ created_problem.record.assignment_group }}"
+          - "🔗 URL: https://{{ servicenow_instance }}/nav_to.do?uri=problem.do?sys_id={{ created_problem.record.sys_id }}"
+
+    - name: Display creation summary
+      ansible.builtin.debug:
+        msg: 
+          - "🎉 ServiceNow Ticket Creation Summary"
+          - "=====================================  "
+          - "{% if created_incident is defined and created_incident is succeeded %}✅ Incident: {{ created_incident.record.number }}{% endif %}"
+          - "{% if created_change_request is defined and created_change_request is succeeded %}✅ Change Request: {{ created_change_request.record.number }}{% endif %}"
+          - "{% if created_problem is defined and created_problem is succeeded %}✅ Problem: {{ created_problem.record.number }}{% endif %}"
+          - "🕐 Created at: {{ ansible_date_time.iso8601 }}"
+          - "👤 Created by: {{ servicenow_username }}"
+      tags:
+        - create
+        - summary
+
+  handlers:
+    - name: Send notification on ticket creation
+      listen: "notify_ticket_created"
+      ansible.builtin.debug:
+        msg: "Notification: New ServiceNow tickets have been created and are ready for processing"
