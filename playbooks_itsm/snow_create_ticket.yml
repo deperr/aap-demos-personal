@@ -24,8 +24,8 @@
       short_description: "{{ incident_short_description | default('Incident created via AAP') }}"
       description: "{{ incident_description | default('This is an incident created using Ansible Automation Platform with servicenow.itsm collection') }}"
       # priority: "{{ incident_priority | default('3') }}"
-      urgency: "{{ incident_urgency | default('2') }}"
-      impact: "{{ incident_impact | default('3') }}"
+      urgency: "{{ incident_urgency | default('Medium') }}"
+      impact: "{{ incident_impact | default('Low') }}"
       # category: "{{ incident_category | default('Software') }}"
       # subcategory: "{{ incident_subcategory | default('Application') }}"
       # caller_id: "{{ incident_caller | default(servicenow_username) }}"
@@ -54,7 +54,7 @@
         - create
         - incident
       servicenow.itsm.incident:
-        state: present
+        # state: present
         short_description: "{{ new_incident.short_description }}"
         description: "{{ new_incident.description }}"
         # priority: "{{ new_incident.priority }}"
