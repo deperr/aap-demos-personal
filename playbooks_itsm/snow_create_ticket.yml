@@ -36,7 +36,7 @@
     new_change_request:
       short_description: "{{ change_short_description | default('Change request created via AAP') }}"
       description: "{{ change_description | default('This is a change request created using Ansible Automation Platform') }}"
-      priority: "{{ change_priority | default('3') }}"
+      priority: "{{ change_priority | default('23') }}"
       risk: "{{ change_risk | default('low') }}"
       impact: "{{ change_impact | default('3') }}"
       type: "{{ change_type | default('normal') }}"
@@ -61,7 +61,6 @@
         urgency: "{{ new_incident.urgency }}"
         impact: "{{ new_incident.impact }}"
         caller: "{{ incident_caller | default(servicenow_username) }}"
-
         # category: "{{ new_incident.category }}"
         # subcategory: "{{ new_incident.subcategory }}"
         # caller_id: "{{ new_incident.caller_id }}"
@@ -80,12 +79,12 @@
       ansible.builtin.debug:
         msg: 
           - "✅ Incident created successfully!"
-          - "📋 Number: {{ created_incident.record.number }}"
-          - "🆔 Sys ID: {{ created_incident.record.sys_id }}"
-          - "📊 State: {{ created_incident.record.state }}"
-          - "⚡ Priority: {{ created_incident.record.priority }}"
-          - "👤 Assigned to: {{ created_incident.record.assignment_group }}"
-          - "🔗 URL: https://{{ servicenow_instance }}/nav_to.do?uri=incident.do?sys_id={{ created_incident.record.sys_id }}"
+          - "Number: {{ created_incident.record.number }}"
+          - "Sys ID: {{ created_incident.record.sys_id }}"
+          - "State: {{ created_incident.record.state }}"
+          - "Priority: {{ created_incident.record.priority }}"
+          - "Assigned to: {{ created_incident.record.assignment_group }}"
+          - "URL: https://{{ servicenow_instance }}/nav_to.do?uri=incident.do?sys_id={{ created_incident.record.sys_id }}"
 
     - name: Create change request in ServiceNow
       register: created_change_request
@@ -119,13 +118,13 @@
       ansible.builtin.debug:
         msg: 
           - "✅ Change request created successfully!"
-          - "📋 Number: {{ created_change_request.record.number }}"
-          - "🆔 Sys ID: {{ created_change_request.record.sys_id }}"
-          - "📊 State: {{ created_change_request.record.state }}"
-          - "⚠️ Risk: {{ created_change_request.record.risk }}"
-          - "📅 Type: {{ created_change_request.record.type }}"
-          - "👤 Assigned to: {{ created_change_request.record.assignment_group }}"
-          - "🔗 URL: https://{{ servicenow_instance }}/nav_to.do?uri=change_request.do?sys_id={{ created_change_request.record.sys_id }}"
+          - "Number: {{ created_change_request.record.number }}"
+          - "Sys ID: {{ created_change_request.record.sys_id }}"
+          - "State: {{ created_change_request.record.state }}"
+          - "Risk: {{ created_change_request.record.risk }}"
+          - "Type: {{ created_change_request.record.type }}"
+          - "Assigned to: {{ created_change_request.record.assignment_group }}"
+          - "URL: https://{{ servicenow_instance }}/nav_to.do?uri=change_request.do?sys_id={{ created_change_request.record.sys_id }}"
 
     - name: Create problem record in ServiceNow
       register: created_problem
