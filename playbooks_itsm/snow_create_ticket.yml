@@ -23,15 +23,10 @@
     new_incident:
       short_description: "{{ incident_short_description | default('Incident created via AAP') }}"
       description: "{{ incident_description | default('This is an incident created using Ansible Automation Platform with servicenow.itsm collection') }}"
-      # priority: "{{ incident_priority | default('3') }}"
-      urgency: "{{ incident_urgency | default('high') }}"
+      urgency: "{{ incident_urgency | default('medium') }}"
       impact: "{{ incident_impact | default('medium') }}"
-      # category: "{{ incident_category | default('Software') }}"
-      # subcategory: "{{ incident_subcategory | default('Application') }}"
-      # caller_id: "{{ incident_caller | default(servicenow_username) }}"
       caller: "{{ incident_caller | default(servicenow_username) }}"
-      # assignment_group: "{{ incident_assignment_group | default('IT Support') }}"
-      state: "{{ incident_state | default('New') }}"
+      state: "{{ incident_state | default('new') }}"
     
     new_change_request:
       short_description: "{{ change_short_description | default('Change request created via AAP') }}"
@@ -54,17 +49,11 @@
         - create
         - incident
       servicenow.itsm.incident:
-        # state: present
         short_description: "{{ new_incident.short_description }}"
         description: "{{ new_incident.description }}"
-        # priority: "{{ new_incident.priority }}"
         urgency: "{{ new_incident.urgency }}"
         impact: "{{ new_incident.impact }}"
         caller: "{{ incident_caller | default(servicenow_username) }}"
-        # category: "{{ new_incident.category }}"
-        # subcategory: "{{ new_incident.subcategory }}"
-        # caller_id: "{{ new_incident.caller_id }}"
-        # assignment_group: "{{ new_incident.assignment_group }}"
         other:
           state: "{{ new_incident.state }}"
 
