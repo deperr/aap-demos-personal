@@ -20,13 +20,13 @@
         # client_secret: "{{ servicenow_client_secret | default(omit) }}"
   
   vars:
-    new_incident:
-      short_description: "{{ incident_short_description | default('Incident created via AAP') }}"
-      description: "{{ incident_description | default('This is an incident created using Ansible Automation Platform with servicenow.itsm collection') }}"
-      urgency: "{{ incident_urgency | default('medium') }}"
-      impact: "{{ incident_impact | default('medium') }}"
-      caller: "{{ incident_caller | default(servicenow_username) }}"
-      state: "{{ incident_state | default('new') }}"
+    # new_incident:
+    #   short_description: "{{ incident_short_description | default('Incident created via AAP') }}"
+    #   description: "{{ incident_description | default('This is an incident created using Ansible Automation Platform with servicenow.itsm collection') }}"
+    #   urgency: "{{ incident_urgency | default('medium') }}"
+    #   impact: "{{ incident_impact | default('medium') }}"
+    #   caller: "{{ incident_caller | default(servicenow_username) }}"
+    #   state: "{{ incident_state | default('new') }}"
     
     new_change_request:
       short_description: "{{ change_short_description | default('Change request created via AAP') }}"
