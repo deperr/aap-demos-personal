@@ -24,7 +24,7 @@
       short_description: "{{ incident_short_description | default('Incident created via AAP') }}"
       description: "{{ incident_description | default('This is an incident created using Ansible Automation Platform with servicenow.itsm collection') }}"
       # priority: "{{ incident_priority | default('3') }}"
-      urgency: "{{ incident_urgency | default('3') }}"
+      urgency: "{{ incident_urgency | default('2') }}"
       impact: "{{ incident_impact | default('3') }}"
       # category: "{{ incident_category | default('Software') }}"
       # subcategory: "{{ incident_subcategory | default('Application') }}"
@@ -36,7 +36,7 @@
     new_change_request:
       short_description: "{{ change_short_description | default('Change request created via AAP') }}"
       description: "{{ change_description | default('This is a change request created using Ansible Automation Platform') }}"
-      priority: "{{ change_priority | default('2') }}"
+      priority: "{{ change_priority | default('3') }}"
       risk: "{{ change_risk | default('low') }}"
       impact: "{{ change_impact | default('3') }}"
       type: "{{ change_type | default('normal') }}"
