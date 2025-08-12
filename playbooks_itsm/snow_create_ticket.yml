@@ -1,10 +1,16 @@
 ---
+
 - name: ServiceNow ITSM - Create Tickets and Change Requests
   hosts: localhost
   gather_facts: false
   
   module_defaults:
-    servicenow.itsm.all:
+    servicenow.itsm.incident:
+      instance:
+        host: "{{ servicenow_instance }}"
+        username: "{{ servicenow_username }}"
+        password: "{{ servicenow_password }}"
+    servicenow.itsm.incident_info:
       instance:
         host: "{{ servicenow_instance }}"
         username: "{{ servicenow_username }}"
