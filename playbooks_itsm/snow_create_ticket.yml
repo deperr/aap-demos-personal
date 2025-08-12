@@ -4,7 +4,7 @@
   gather_facts: false
   
   module_defaults:
-    group/servicenow.itsm.all:
+    servicenow.itsm.all:
       instance:
         host: "{{ servicenow_instance }}"
         username: "{{ servicenow_username }}"
